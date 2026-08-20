@@ -727,7 +727,7 @@
                 try {
                     const r = await fetch('/api/health');
                     const d = await r.json();
-                    $("server-ip").textContent = d.local_ip + ":8000";
+                    $("server-ip").textContent = d.local_ip + (location.port ? ":" + location.port : "");
                 } catch {
                     $("server-ip").textContent = "Local Server Offline";
                 }

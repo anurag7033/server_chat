@@ -3,3 +3,4 @@ uvicorn
 websockets
 pyperclip
 python-multipart
+gunicorn

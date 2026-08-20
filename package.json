@@ -1,0 +1,13 @@
+{
+  "name": "phone-pc-control",
+  "version": "3.5.0",
+  "description": "Premium Phone-PC Control Hub",
+  "main": "backend/main.py",
+  "scripts": {
+    "install-py": "pip install -r backend/requirements.txt",
+    "start": "uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}",
+    "build": "npm run install-py"
+  },
+  "author": "anurag7033",
+  "license": "MIT"
+}
