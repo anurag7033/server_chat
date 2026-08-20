@@ -697,10 +697,6 @@
     <main id="games" class="content">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
             <h3 style="margin: 0;">Fun Center</h3>
-            <div id="game-selection">
-                <button class="btn btn-primary" style="padding: 8px 16px;" onclick="app.sudoku.init(6)">6x6</button>
-                <button class="btn btn-primary" style="padding: 8px 16px;" onclick="app.sudoku.init(9)">9x9</button>
-            </div>
         </div>
 
         <div id="sudoku-container" class="premium-card" style="display: none; padding: 12px; text-align: center;">
@@ -720,13 +716,19 @@
             </div>
         </div>
 
-        <div id="game-landing" class="premium-card" style="text-align: center; padding: 48px 24px;">
-            <i data-lucide="brain-circuit" style="width: 64px; height: 64px; color: var(--primary); margin-bottom: 24px;"></i>
-            <h2>Sudoku Master</h2>
-            <p style="color: var(--text-muted); margin-bottom: 32px;">Challenge your brain with 6x6 or 9x9 puzzles.</p>
-            <div style="display: flex; gap: 16px; justify-content: center;">
-                <button class="btn btn-primary" onclick="app.sudoku.init(6)">Play 6x6</button>
-                <button class="btn btn-primary" onclick="app.sudoku.init(9)">Play 9x9</button>
+        <div id="game-landing">
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Pick a game and challenge your skills.</p>
+
+            <div class="quick-actions">
+                <div class="premium-card action-card" onclick="app.sudoku.init(6)">
+                    <i data-lucide="layout-grid" style="color: #4c84ff;"></i>
+                    <span>Sudoku 6x6</span>
+                </div>
+                <div class="premium-card action-card" onclick="app.sudoku.init(9)">
+                    <i data-lucide="grid" style="color: #2864e8;"></i>
+                    <span>Sudoku 9x9</span>
+                </div>
+                <!-- Future games can be added here -->
             </div>
         </div>
     </main>
