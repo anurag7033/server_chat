@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Master - Offline Games</title>
+    <style>
+        :root {
+            --bg-color: #0a0a12;
+            --card-bg: #1a1a2e;
+            --accent-color: #00f2ff;
+            --text-color: #e0e0e0;
+            --border: #30363d;
+            --primary: #2864e8;
+            --busy: #da3633;
+            --text-muted: #8b949e;
+            --surface: #21262d;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-home {
+            text-decoration: none;
+            font-size: 24px;
+            background: var(--card-bg);
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            color: var(--text-color);
+        }
+
+        h1 {
+            color: var(--accent-color);
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .game-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        #sudoku-board {
+            display: grid;
+            margin: 0 auto;
+            gap: 1px;
+            background: var(--border);
+            border: 2px solid var(--border);
+            width: fit-content;
+        }
+
+        .sudoku-cell {
+            width: 40px;
+            height: 40px;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            font-size: 18px;
+        }
+
+        .sudoku-cell:hover { background: var(--surface); }
+        .sudoku-cell.selected { background: var(--primary); color: white; }
+        .sudoku-cell.fixed { color: var(--text-muted); background: rgba(255,255,255,0.02); cursor: default; }
+        .sudoku-cell.error { color: var(--busy); }
+
+        /* Thick borders for sub-grids */
+        .sudoku-board-9 .sudoku-cell:nth-child(3n) { border-right: 2px solid var(--text-muted); }
+        .sudoku-board-9 .sudoku-cell:nth-child(9n) { border-right: 1px solid var(--border); }
+        .sudoku-board-9 .sudoku-cell:nth-child(n+19):nth-child(-n+27),
+        .sudoku-board-9 .sudoku-cell:nth-child(n+46):nth-child(-n+54) { border-bottom: 2px solid var(--text-muted); }
+
+        .sudoku-board-6 .sudoku-cell:nth-child(3n) { border-right: 2px solid var(--text-muted); }
+        .sudoku-board-6 .sudoku-cell:nth-child(6n) { border-right: 1px solid var(--border); }
+        .sudoku-board-6 .sudoku-cell:nth-child(n+13):nth-child(-n+18),
+        .sudoku-board-6 .sudoku-cell:nth-child(n+31):nth-child(-n+36) { border-bottom: 2px solid var(--text-muted); }
+
+        #sudoku-controls {
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+
+        #sudoku-num-pad {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-red { background: var(--busy); color: white; }
+
+        .difficulty-selector {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        @media (max-width: 500px) {
+            .sudoku-cell { width: 34px; height: 34px; font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="../../index.html" class="btn-home">🏠</a>
+        <h1>Sudoku Master</h1>
+        <div style="width: 40px;"></div>
+    </div>
+
+    <div class="difficulty-selector">
+        <button class="btn btn-primary" onclick="game.init(6)">6x6 Grid</button>
+        <button class="btn btn-primary" onclick="game.init(9)">9x9 Grid</button>
+    </div>
+
+    <div class="game-container">
+        <div id="sudoku-board"></div>
+
+        <div id="sudoku-controls">
+            <div id="sudoku-num-pad"></div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn btn-red" onclick="game.clear()">Clear</button>
+                <button class="btn btn-primary" onclick="game.init(game.size)">New Game</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const $ = (id) => document.getElementById(id);
+
+        const game = {
+            size: 9,
+            board: [],
+            initial: [],
+            selected: null,
+
+            init(size) {
+                this.size = size;
+                this.selected = null;
+                this.generate();
+                this.render();
+            },
+
+            generate() {
+                const s = this.size;
+                const full = Array(s * s).fill(0);
+
+                const solve = (b) => {
+                    for (let i = 0; i < s * s; i++) {
+                        if (b[i] === 0) {
+                            const row = Math.floor(i / s);
+                            const col = i % s;
+                            const nums = [...Array(s).keys()].map(x => x + 1).sort(() => Math.random() - 0.5);
+
+                            for (let n of nums) {
+                                if (this.isValid(b, row, col, n)) {
+                                    b[i] = n;
+                                    if (solve(b)) return true;
+                                    b[i] = 0;
+                                }
+                            }
+                            return false;
+                        }
+                    }
+                    return true;
+                };
+
+                solve(full);
+                this.board = [...full];
+
+                const toRemove = s === 9 ? 45 : 15;
+                for (let i = 0; i < toRemove; i++) {
+                    let idx = Math.floor(Math.random() * s * s);
+                    this.board[idx] = 0;
+                }
+                this.initial = [...this.board];
+            },
+
+            isValid(b, r, c, n) {
+                const s = this.size;
+                const subH = s === 6 ? 2 : 3;
+                const subW = 3;
+
+                for (let i = 0; i < s; i++) {
+                    if (b[r * s + i] === n || b[i * s + c] === n) return false;
+                }
+
+                const startR = Math.floor(r / subH) * subH;
+                const startC = Math.floor(c / subW) * subW;
+                for (let i = 0; i < subH; i++) {
+                    for (let j = 0; j < subW; j++) {
+                        if (b[(startR + i) * s + (startC + j)] === n) return false;
+                    }
+                }
+                return true;
+            },
+
+            render() {
+                const board = $("sudoku-board");
+                board.innerHTML = "";
+                board.className = `sudoku-board-${this.size}`;
+                board.style.gridTemplateColumns = `repeat(${this.size}, 1fr)`;
+
+                this.board.forEach((val, i) => {
+                    const cell = document.createElement("div");
+                    cell.className = "sudoku-cell";
+                    if (this.initial[i] !== 0) cell.classList.add("fixed");
+                    if (this.selected === i) cell.classList.add("selected");
+
+                    cell.textContent = val === 0 ? "" : val;
+                    cell.onclick = () => {
+                        if (this.initial[i] === 0) {
+                            this.selected = i;
+                            this.render();
+                        }
+                    };
+                    board.appendChild(cell);
+                });
+
+                const pad = $("sudoku-num-pad");
+                pad.innerHTML = "";
+                for (let i = 1; i <= this.size; i++) {
+                    const btn = document.createElement("button");
+                    btn.className = "btn btn-primary";
+                    btn.style.width = "44px";
+                    btn.textContent = i;
+                    btn.onclick = () => this.input(i);
+                    pad.appendChild(btn);
+                }
+                const del = document.createElement("button");
+                del.className = "btn btn-red";
+                del.style.width = "44px";
+                del.textContent = "✖";
+                del.onclick = () => this.input(0);
+                pad.appendChild(del);
+            },
+
+            input(n) {
+                if (this.selected !== null) {
+                    this.board[this.selected] = n;
+                    this.render();
+                    this.checkWin();
+                }
+            },
+
+            clear() {
+                this.board = [...this.initial];
+                this.render();
+            },
+
+            checkWin() {
+                if (!this.board.includes(0)) {
+                    let valid = true;
+                    for(let i=0; i<this.size*this.size; i++) {
+                        const val = this.board[i];
+                        this.board[i] = 0;
+                        if(!this.isValid(this.board, Math.floor(i/this.size), i%this.size, val)) {
+                            valid = false;
+                            this.board[i] = val;
+                            break;
+                        }
+                        this.board[i] = val;
+                    }
+                    if(valid) {
+                        alert("🎉 Congratulations! You solved the Sudoku!");
+                        const wins = parseInt(localStorage.getItem('sudoku_wins') || '0');
+                        localStorage.setItem('sudoku_wins', (wins + 1).toString());
+                    }
+                }
+            }
+        };
+
+        game.init(9);
+    </script>
+</body>
+</html>
