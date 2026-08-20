@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Word Scramble | Neon Arcade</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-ui">
+        <div class="game-header">
+            <button onclick="location.href='../../index.html'" class="nav-btn">🏠 Hub</button>
+            <div class="stats">
+                <div class="stat">SCORE: <span id="score">0</span></div>
+                <div class="stat">TIME: <span id="timer">30</span>s</div>
+            </div>
+        </div>
+
+        <div class="scramble-container">
+            <div id="word" class="word-scrambled">WORD</div>
+            <div id="hint" class="hint">Category: Action</div>
+            <input type="text" id="user-input" placeholder="Enter the correct word..." autocomplete="off">
+            <div class="btn-group">
+                <button id="check-btn" class="main-btn">CHECK</button>
+                <button id="skip-btn" class="main-btn secondary">SKIP</button>
+            </div>
+        </div>
+
+        <div id="game-over" class="overlay hidden">
+            <h1 class="glow-text">TIME UP!</h1>
+            <p>Your Score: <span id="final-score">0</span></p>
+            <button id="restart-btn" class="main-btn">PLAY AGAIN</button>
+            <button onclick="location.href='../../index.html'" class="main-btn secondary">HUB</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

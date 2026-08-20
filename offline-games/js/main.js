@@ -1,19 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Load high scores from localStorage
-    const scores = {
-        racing: localStorage.getItem('racing_highscore') || 0,
-        memory: localStorage.getItem('memory_highscore') || 0,
-        ttt: localStorage.getItem('ttt_wins') || 0,
-        sudoku: localStorage.getItem('sudoku_wins') || 0,
-        snake: localStorage.getItem('snake_highscore') || 0,
-        zombie: localStorage.getItem('zombie_highscore') || 0
-    };
+    const gameIds = [
+        'car-racing', 'memory-card', 'tic-tac-toe', 'sudoku', 'snake', 'zombie-shooter',
+        'highway-racer', 'space-shooter', 'ninja-runner', '2048', 'minesweeper',
+        'word-scramble', 'simon-says', 'pong', 'breakout', 'flappy-bird',
+        'dino', 'jump', 'zombie-survival', 'dungeon-crawler', 'tower-defense',
+        'castle-defender', 'archery', 'helicopter', 'shooting', 'aliens',
+        'sword', 'void', 'rocket', 'number-puzzle', 'sliding-puzzle', 'find-difference'
+    ];
 
-    // Update UI
-    document.getElementById('score-racing').textContent = scores.racing;
-    document.getElementById('score-memory').textContent = scores.memory;
-    document.getElementById('score-ttt').textContent = scores.ttt;
-    document.getElementById('score-sudoku').textContent = scores.sudoku;
-    document.getElementById('score-snake').textContent = scores.snake;
-    document.getElementById('score-zombie').textContent = scores.zombie;
+    gameIds.forEach(id => {
+        const score = localStorage.getItem(`highScore_${id}`) || 0;
+        const el = document.getElementById(`score-${id}`);
+        if (el) {
+            el.textContent = score;
+        }
+    });
 });

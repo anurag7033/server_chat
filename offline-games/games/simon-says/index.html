@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Simon Says | Neon Arcade</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-ui">
+        <div class="game-header">
+            <button onclick="location.href='../../index.html'" class="nav-btn">🏠 Hub</button>
+            <div id="score">SCORE: 0</div>
+            <div id="high-score">BEST: 0</div>
+        </div>
+
+        <div class="simon-container">
+            <div class="pad green" data-id="0"></div>
+            <div class="pad red" data-id="1"></div>
+            <div class="pad yellow" data-id="2"></div>
+            <div class="pad blue" data-id="3"></div>
+            <div id="start-btn-center" class="center-btn">START</div>
+        </div>
+
+        <div id="status" class="status">Watch the sequence...</div>
+
+        <div id="game-over" class="overlay hidden">
+            <h1 class="glow-text" style="color: #f85149;">WRONG!</h1>
+            <p>Your Score: <span id="final-score">0</span></p>
+            <button id="restart-btn" class="main-btn">RETRY</button>
+            <button onclick="location.href='../../index.html'" class="main-btn secondary">HUB</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

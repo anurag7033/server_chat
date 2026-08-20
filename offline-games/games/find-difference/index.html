@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Find the Difference | Neon Arcade</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-ui">
+        <div class="game-header">
+            <button onclick="location.href='../../index.html'" class="nav-btn">🏠 Hub</button>
+            <div id="stats">
+                <span>FOUND: <span id="found">0</span> / 5</span>
+                <span>TIME: <span id="timer">60</span>s</span>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <div class="side">
+                <canvas id="canvasLeft"></canvas>
+                <div class="label">ORIGINAL</div>
+            </div>
+            <div class="side">
+                <canvas id="canvasRight"></canvas>
+                <div class="label">FIND 5 DIFFERENCES</div>
+            </div>
+        </div>
+
+        <div id="win-screen" class="overlay hidden">
+            <h1 class="glow-text">WELL SPOTTED!</h1>
+            <p>You found all differences!</p>
+            <button id="next-btn" class="main-btn">NEXT LEVEL</button>
+            <button onclick="location.href='../../index.html'" class="main-btn secondary">HUB</button>
+        </div>
+
+        <div id="game-over" class="overlay hidden">
+            <h1 class="glow-text" style="color: #f85149;">TIME OUT</h1>
+            <p>Better luck next time!</p>
+            <button id="restart-btn" class="main-btn">RETRY</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

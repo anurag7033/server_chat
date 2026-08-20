@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Helicopter | Neon Arcade</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-ui">
+        <div class="game-header">
+            <button onclick="location.href='../../index.html'" class="nav-btn">🏠 Hub</button>
+            <div id="score">0m</div>
+            <div id="high-score">Best: 0m</div>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="start-screen" class="overlay">
+            <h1 class="glow-text">NEON COPTER</h1>
+            <p>Hold Tap / Mouse / Space to RISE</p>
+            <p>Release to FALL</p>
+            <button id="start-btn" class="main-btn">LIFT OFF</button>
+        </div>
+
+        <div id="game-over" class="overlay hidden">
+            <h1 class="glow-text" style="color: #f85149;">CRASHED!</h1>
+            <p id="final-dist">Distance: 0m</p>
+            <button id="restart-btn" class="main-btn">RETRY</button>
+            <button onclick="location.href='../../index.html'" class="main-btn secondary">HUB</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

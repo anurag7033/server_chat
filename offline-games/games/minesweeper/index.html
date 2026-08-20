@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Minesweeper | Neon Arcade</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-ui">
+        <div class="game-header">
+            <button onclick="location.href='../../index.html'" class="nav-btn">🏠 Hub</button>
+            <div class="stats">
+                <div class="stat-item">💣 <span id="mine-count">10</span></div>
+                <div class="stat-item">⏱️ <span id="timer">000</span></div>
+            </div>
+            <select id="difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+        </div>
+
+        <div class="game-area">
+            <div id="grid" class="grid"></div>
+        </div>
+
+        <div id="game-over" class="overlay hidden">
+            <h1 class="glow-text" style="color: #f85149;">BOOM!</h1>
+            <p>You hit a mine!</p>
+            <button id="restart-btn" class="main-btn">RETRY</button>
+            <button onclick="location.href='../../index.html'" class="main-btn secondary">HUB</button>
+        </div>
+
+        <div id="win-screen" class="overlay hidden">
+            <h1 class="glow-text">CLEARED!</h1>
+            <p>Time: <span id="final-time">0</span>s</p>
+            <button id="play-again-btn" class="main-btn">PLAY AGAIN</button>
+            <button onclick="location.href='../../index.html'" class="main-btn secondary">HUB</button>
+        </div>
+
+        <div class="controls-hint">
+            <p>Left Click: Reveal | Right Click: Flag</p>
+            <p>Mobile: Tap to reveal, Long press to flag</p>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

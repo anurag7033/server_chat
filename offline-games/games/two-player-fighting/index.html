@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2-Player Fighting | Neon Arcade</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-ui">
+        <div class="game-header">
+            <button onclick="location.href='../../index.html'" class="nav-btn">🏠 Hub</button>
+            <div id="health-bars">
+                <div class="hp-container">
+                    <div class="hp-label">PLAYER 1</div>
+                    <div class="hp-bar-bg"><div id="p1-hp" class="hp-bar"></div></div>
+                </div>
+                <div id="timer">60</div>
+                <div class="hp-container">
+                    <div class="hp-label">PLAYER 2</div>
+                    <div class="hp-bar-bg"><div id="p2-hp" class="hp-bar"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="start-screen" class="overlay">
+            <h1 class="glow-text">NEON STRIKE</h1>
+            <div class="controls-guide">
+                <div class="p-guide">
+                    <h3>P1 (LEFT)</h3>
+                    <p>Move: W A S D</p>
+                    <p>Attack: J | Special: K</p>
+                </div>
+                <div class="p-guide">
+                    <h3>P2 (RIGHT)</h3>
+                    <p>Move: ARROWS</p>
+                    <p>Attack: 1 | Special: 2</p>
+                </div>
+            </div>
+            <button id="start-btn" class="main-btn">FIGHT!</button>
+        </div>
+
+        <div id="game-over" class="overlay hidden">
+            <h1 id="win-message" class="glow-text">P1 WINS!</h1>
+            <button id="restart-btn" class="main-btn">REMATCH</button>
+            <button onclick="location.href='../../index.html'" class="main-btn secondary">HUB</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

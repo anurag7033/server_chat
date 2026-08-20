@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Castle Defender | Neon Arcade</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-ui">
+        <div class="game-header">
+            <button onclick="location.href='../../index.html'" class="nav-btn">🏠 Hub</button>
+            <div id="stats">
+                <span>🏰 HP: <span id="hp">100</span></span>
+                <span>💰 GOLD: <span id="gold">0</span></span>
+                <span>WAVE: <span id="wave">1</span></span>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="upgrade-menu" class="hidden">
+            <h3>CASTLE UPGRADES</h3>
+            <button id="up-hp" class="main-btn secondary">REPAIR HP ($50)</button>
+            <button id="up-fire" class="main-btn secondary">FIRE RATE ($100)</button>
+            <button id="next-wave" class="main-btn">NEXT WAVE</button>
+        </div>
+
+        <div id="start-screen" class="overlay">
+            <h1 class="glow-text">CASTLE DEFENDER</h1>
+            <p>Protect your castle from the invading horde!</p>
+            <p>Click and Drag to Aim, Release to Shoot Arrows.</p>
+            <button id="start-btn" class="main-btn">DEFEND</button>
+        </div>
+
+        <div id="game-over" class="overlay hidden">
+            <h1 class="glow-text" style="color: #f85149;">CASTLE FALLEN</h1>
+            <p id="final-stats">Waves Defended: 0</p>
+            <button id="restart-btn" class="main-btn">RETRY</button>
+            <button onclick="location.href='../../index.html'" class="main-btn secondary">HUB</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

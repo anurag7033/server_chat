@@ -1,0 +1,46 @@
+body { background: #0a0b10; overflow: hidden; touch-action: manipulation; }
+#game-ui { width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+
+.game-header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.stats { display: flex; gap: 20px; font-family: 'Courier New', Courier, monospace; color: #00f2ff; font-weight: bold; font-size: 1.2rem; }
+#difficulty { background: #161b22; color: #00f2ff; border: 1px solid #30363d; padding: 5px; border-radius: 5px; outline: none; }
+
+.game-area { background: #161b22; padding: 10px; border-radius: 10px; border: 2px solid #30363d; box-shadow: var(--neon-shadow); overflow: auto; max-width: 100%; max-height: 70vh; }
+
+.grid { display: grid; gap: 2px; background: #30363d; border: 2px solid #30363d; }
+
+.cell {
+    width: 30px;
+    height: 30px;
+    background: #21262d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    font-size: 14px;
+}
+
+.cell:hover { background: #30363d; }
+.cell.revealed { background: #0d1117; cursor: default; }
+.cell.mine { background: #f85149; }
+.cell.flagged::after { content: '🚩'; font-size: 12px; }
+
+.val-1 { color: #00f2ff; }
+.val-2 { color: #3fb950; }
+.val-3 { color: #f85149; }
+.val-4 { color: #7000ff; }
+.val-5 { color: #d29922; }
+.val-6 { color: #00d2ff; }
+.val-7 { color: #fff; }
+.val-8 { color: #8b949e; }
+
+.overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; text-align: center; }
+.hidden { display: none !important; }
+
+.controls-hint { margin-top: 20px; color: #8b949e; font-size: 0.8rem; text-align: center; }
+
+@media (max-width: 500px) {
+    .cell { width: 25px; height: 25px; font-size: 12px; }
+}

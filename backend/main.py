@@ -10,7 +10,8 @@ import threading
 import uuid
 import sys
 import logging
-from typing import Optional
+import time
+from typing import Optional, Dict, List
 
 # Optimization for Windows Stability
 if sys.platform == 'win32':
@@ -44,6 +45,48 @@ from pydantic import BaseModel
 # ============================================================
 
 app = FastAPI(title="Phone-PC Control Hub", version="3.0.0")
+
+# --- Security: Rate Limiting & IP Blocking ---
+# IP -> [timestamp1, timestamp2, ...]
+request_history: Dict[str, List[float]] = {}
+blocked_ips = set()
+
+RATE_LIMIT_WINDOW = 10  # seconds
+RATE_LIMIT_COUNT = 30   # max requests per window
+BLOCK_THRESHOLD = 100   # requests in window before hard block
+
+@app.middleware("http")
+async def rate_limit_middleware(request, call_next):
+    client = request.client
+    client_ip = client.host if client else "127.0.0.1"
+
+    if client_ip in blocked_ips:
+        return HTMLResponse(content="Access Denied: Your IP is temporarily blocked due to suspicious activity.", status_code=403)
+
+    now = time.time()
+
+    # Initialize or get history
+    if client_ip not in request_history:
+        request_history[client_ip] = []
+
+    # Prune old requests
+    request_history[client_ip] = [t for t in request_history[client_ip] if now - t < RATE_LIMIT_WINDOW]
+
+    # Add current request
+    request_history[client_ip].append(now)
+    count = len(request_history[client_ip])
+
+    # Hard block check
+    if count > BLOCK_THRESHOLD:
+        blocked_ips.add(client_ip)
+        print(f"!!! SECURITY ALERT: Blocking IP {client_ip} for spamming ({count} requests) !!!")
+        return HTMLResponse(content="Access Denied: Your IP has been blocked.", status_code=403)
+
+    # Rate limit check
+    if count > RATE_LIMIT_COUNT:
+        return HTMLResponse(content="Too many requests. Please slow down.", status_code=429)
+
+    return await call_next(request)
 
 BASE_DIR = Path(__file__).resolve().parent
 TRANSFER_DIR = BASE_DIR / "transfers"
@@ -274,14 +317,13 @@ async def websocket_endpoint(websocket: WebSocket):
 
     async with clients_lock:
         connected_clients.add(websocket)
-
-    client_info[websocket] = {
-        "device_id": None,
-        "device_name": "Guest",
-        "status": "online",
-        "joined_at": now_iso(),
-        "is_host": local_client,
-    }
+        client_info[websocket] = {
+            "device_id": None,
+            "device_name": "Guest",
+            "status": "online",
+            "joined_at": now_iso(),
+            "is_host": local_client,
+        }
 
     try:
         while True:
@@ -321,13 +363,14 @@ async def websocket_endpoint(websocket: WebSocket):
                     await websocket.close(code=4002)
                     break
 
-                client_info[websocket] = {
-                    "device_id": device_id,
-                    "device_name": device_name,
-                    "status": requested_status,
-                    "joined_at": client_info[websocket]["joined_at"],
-                    "is_host": is_host,
-                }
+                async with clients_lock:
+                    client_info[websocket] = {
+                        "device_id": device_id,
+                        "device_name": device_name,
+                        "status": requested_status,
+                        "joined_at": client_info[websocket]["joined_at"],
+                        "is_host": is_host,
+                    }
 
                 if is_host:
                     host_device_id = device_id
@@ -735,6 +778,44 @@ async def websocket_endpoint(websocket: WebSocket):
                         "by": info.get("device_name", "Host"),
                         "timestamp": now_iso(),
                     })
+
+            # ------------------------------------------------
+            # TASK ASSIGNMENT
+            # ------------------------------------------------
+            elif msg_type == "assign_task":
+                target_id = data.get("target_id")
+                task_desc = clean_text(data.get("task"), 500)
+                if not task_desc: continue
+
+                info = client_info.get(websocket, {})
+                sender_name = info.get("device_name", "Someone")
+
+                print(f"[TASK] Routing from '{sender_name}' to '{target_id}': {task_desc}")
+
+                payload = {
+                    "type": "task_assigned",
+                    "task": task_desc,
+                    "from_name": sender_name,
+                    "from_id": info.get("device_id"),
+                    "timestamp": now_iso()
+                }
+
+                if target_id == "all":
+                    await broadcast(payload)
+                else:
+                    target_ws = None
+                    async with clients_lock:
+                        # Use list() to avoid dictionary changed size error
+                        for ws, ci in list(client_info.items()):
+                            if ci.get("device_id") == target_id:
+                                target_ws = ws
+                                break
+
+                    if target_ws:
+                        sent = await send_safe(target_ws, payload)
+                        print(f"  -> Direct send to {target_id}: {'Success' if sent else 'Failed'}")
+                    else:
+                        print(f"  -> Target {target_id} not found in connected clients.")
 
     except WebSocketDisconnect:
         pass

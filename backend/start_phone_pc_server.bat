@@ -1,5 +1,5 @@
 @echo off
-setlocal
+setlocal enabledelayedexpansion
 
 title Phone-PC Control Server
 
@@ -8,50 +8,28 @@ set "BACKEND=E:\Phone-PC-Control\backend"
 
 cd /d "%BACKEND%"
 
-echo.
-echo ==========================================
-echo       PHONE-PC CONTROL SERVER
-echo ==========================================
-echo.
-
-:: --- PORT CLEANUP LOGIC ---
-echo Checking port 8000...
-for /f "tokens=5" %%a in ('netstat -aon ^| findstr :8000 ^| findstr LISTENING') do (
-    if not "%%a"=="" (
-        echo Port 8000 is busy (PID %%a). Cleaning up...
-        taskkill /f /pid %%a >nul 2>&1
-        echo Port 8000 is now free.
-    )
+echo Running port check...
+:: Find PID using port 8000 and kill it if it exists
+for /f "tokens=5" %%p in ('netstat -ano ^| findstr LISTENING ^| findstr :8000') do (
+    echo Found process %%p using port 8000.
+    taskkill /F /PID %%p >nul 2>&1
 )
 
 echo.
-echo Backend : %BACKEND%
-echo Python  : %PYTHON%
-echo.
-echo Checking Python...
+echo Python Path: %PYTHON%
+echo Checking Python version...
 "%PYTHON%" --version
 if errorlevel 1 (
-    echo.
-    echo ERROR: Python executable not found.
+    echo Python not found.
     pause
-    exit /b 1
+    exit /b
 )
 
-echo.
-echo Starting Phone-PC Control server...
-echo.
-echo Local URL : http://127.0.0.1:8000
-echo Network   : http://YOUR-PC-IP:8000
-echo WebSocket: ws://YOUR-PC-IP:8000/ws
-echo.
-echo Press CTRL+C to stop the server.
-echo.
-
+echo Starting Server...
 "%PYTHON%" -m uvicorn main:app --host 0.0.0.0 --port 8000 --ws websockets
-
-echo.
-echo ==========================================
-echo       SERVER STOPPED
-echo ==========================================
+if errorlevel 1 (
+    echo.
+    echo Server crashed or failed to start.
+    pause
+)
 pause
-endlocal

@@ -1,0 +1,42 @@
+body { background: #050505; overflow: hidden; touch-action: none; }
+#game-ui { width: 100vw; height: 100vh; position: relative; }
+
+.game-header {
+    position: absolute; top: 0; width: 100%; padding: 10px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 10; background: rgba(0,0,0,0.5); border-bottom: 1px solid #30363d;
+}
+
+.survival-stats { display: flex; flex-direction: column; gap: 5px; }
+.stat-group { display: flex; align-items: center; gap: 10px; }
+.label { font-size: 0.7rem; font-weight: bold; width: 60px; color: #fff; }
+.bar-bg { width: 120px; height: 10px; background: #333; border-radius: 5px; overflow: hidden; }
+.bar { height: 100%; transition: width 0.3s; }
+.bar.hp { background: #f85149; }
+.bar.hunger { background: #d29922; }
+
+#timer { color: #00f2ff; font-family: monospace; font-weight: bold; font-size: 1.2rem; }
+
+canvas { display: block; background: #0d1117; }
+
+#inventory {
+    position: absolute; bottom: 20px; left: 20px;
+    color: #fff; font-family: monospace; font-size: 1.1rem;
+    background: rgba(0,0,0,0.7); padding: 10px 20px; border-radius: 10px;
+    border: 1px solid #30363d; display: flex; gap: 20px;
+}
+
+.overlay {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    background: rgba(10,10,10,0.95); padding: 30px; border: 2px solid #00f2ff;
+    border-radius: 15px; text-align: center; color: #fff; z-index: 100; min-width: 320px;
+}
+.hidden { display: none !important; }
+
+.main-btn { width: 100%; padding: 12px; margin-top: 15px; background: #00f2ff; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; color: #000; }
+.main-btn.secondary { background: #333; color: #fff; }
+
+@media (max-width: 600px) {
+    .bar-bg { width: 80px; }
+    .label { width: 50px; }
+}

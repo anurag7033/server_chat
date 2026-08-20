@@ -1,0 +1,11 @@
+body { overflow: hidden; touch-action: none; background: #0a0b10; }
+#game-ui { width: 100vw; height: 100vh; position: relative; display: flex; flex-direction: column; align-items: center; }
+.game-header { width: 100%; max-width: 800px; padding: 15px; display: flex; justify-content: space-between; align-items: center; z-index: 10; color: #7000ff; font-weight: bold; }
+canvas { background: #000; border-bottom: 4px solid #7000ff; }
+.overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); padding: 30px; border: 2px solid #7000ff; border-radius: 15px; text-align: center; color: #fff; z-index: 100; min-width: 280px; }
+.hidden { display: none; }
+.main-btn { width: 100%; padding: 12px; margin-top: 15px; background: #7000ff; border: none; color: #fff; font-weight: bold; cursor: pointer; }
+.main-btn.secondary { background: #333; }
+.mobile-controls { position: fixed; bottom: 30px; width: 100%; display: flex; justify-content: center; gap: 30px; padding: 0 20px; pointer-events: none; }
+.ctrl-btn { width: 70px; height: 70px; border-radius: 50%; background: rgba(112, 0, 255, 0.2); border: 2px solid #7000ff; color: #7000ff; pointer-events: auto; font-size: 1.5rem; }
+@media (min-width: 769px) { .mobile-controls { display: none; } }

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dungeon Crawler | Neon Arcade</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-ui">
+        <div class="game-header">
+            <button onclick="location.href='../../index.html'" class="nav-btn">🏠 Hub</button>
+            <div id="game-stats">
+                <span>LVL: <span id="level">1</span></span>
+                <span>HP: <span id="hp">10</span></span>
+                <span>GOLD: <span id="gold">0</span></span>
+            </div>
+            <div id="inventory">🔑 <span id="has-key">NO</span></div>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="start-screen" class="overlay">
+            <h1 class="glow-text">DUNGEON CRAWLER</h1>
+            <p>Find the Key (🔑) and reach the Door (🚪)</p>
+            <p>Avoid traps and defeat monsters!</p>
+            <p>Controls: Arrows / WASD</p>
+            <button id="start-btn" class="main-btn">ENTER DUNGEON</button>
+        </div>
+
+        <div id="game-over" class="overlay hidden">
+            <h1 class="glow-text" style="color: #f85149;">YOU PERISHED</h1>
+            <p id="final-stats">Reached Level: 1 | Gold: 0</p>
+            <button id="restart-btn" class="main-btn">RETRY</button>
+            <button onclick="location.href='../../index.html'" class="main-btn secondary">HUB</button>
+        </div>
+
+        <div id="level-complete" class="overlay hidden">
+            <h1 class="glow-text">LEVEL COMPLETE!</h1>
+            <p>Moving deeper into the dungeon...</p>
+            <button id="next-level-btn" class="main-btn">CONTINUE</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

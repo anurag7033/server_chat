@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Game Hub | Neon Arcade</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="glow-text">Offline Game Hub</h1>
+            <p style="color: var(--text-secondary);">Premium Retro Gaming Experience • Completely Offline</p>
+
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search games (e.g. race, puzzle, zombie)...">
+            </div>
+
+            <nav class="categories">
+                <button class="cat-btn active" data-cat="all">All Games</button>
+                <button class="cat-btn" data-cat="racing">🚗 Racing</button>
+                <button class="cat-btn" data-cat="action">🔫 Action</button>
+                <button class="cat-btn" data-cat="puzzle">🧠 Puzzle</button>
+                <button class="cat-btn" data-cat="arcade">🏃 Arcade</button>
+                <button class="cat-btn" data-cat="adventure">⚔️ Adventure</button>
+                <button class="cat-btn" data-cat="2player">👥 2 Player</button>
+            </nav>
+        </header>
+
+        <main id="game-grid" class="game-grid">
+            <!-- Games will be injected by JavaScript -->
+        </main>
+
+        <footer style="text-align: center; margin-top: 50px; padding: 20px; border-top: 1px solid #30363d; color: var(--text-secondary);">
+            <p>Made with Vanilla JavaScript & HTML5 Canvas</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">&copy; 2026 Neon Arcade • Offline Edition</p>
+        </footer>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

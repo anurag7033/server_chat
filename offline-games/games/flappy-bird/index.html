@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Flappy Bird | Neon Arcade</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-ui">
+        <div class="game-header">
+            <button onclick="location.href='../../index.html'" class="nav-btn">🏠 Hub</button>
+            <div id="score">0</div>
+            <div id="high-score">Best: 0</div>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="start-screen" class="overlay">
+            <h1 class="glow-text">FLAPPY BIRD</h1>
+            <p>Tap, Space, or Up to Fly</p>
+            <button id="start-btn" class="main-btn">FLAP</button>
+        </div>
+
+        <div id="game-over" class="overlay hidden">
+            <h1 class="glow-text" style="color: #f85149;">CRASHED!</h1>
+            <p id="final-score">Score: 0</p>
+            <button id="restart-btn" class="main-btn">RETRY</button>
+            <button onclick="location.href='../../index.html'" class="main-btn secondary">HUB</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

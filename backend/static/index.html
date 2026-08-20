@@ -554,6 +554,30 @@
         <div id="member-list"></div>
     </main>
 
+    <main id="tasks" class="content">
+        <h3 style="margin-bottom: 24px;">Task Management</h3>
+
+        <div class="premium-card" style="margin-bottom: 24px;">
+            <div style="font-weight: 600; margin-bottom: 16px;">Assign New Task</div>
+            <label style="font-size: 12px; color: var(--text-muted);">Select Member</label>
+            <select id="taskMemberSelect">
+                <option value="all">Everyone</option>
+            </select>
+
+            <label style="font-size: 12px; color: var(--text-muted); margin-top: 12px;">Task Description</label>
+            <textarea id="taskInput" placeholder="What needs to be done?" style="min-height: 80px;"></textarea>
+
+            <button class="btn btn-primary" style="width: 100%; margin-top: 12px;" onclick="app.assignTask()">
+                <i data-lucide="plus-circle"></i> Assign Task
+            </button>
+        </div>
+
+        <h3 style="font-size: 16px; margin-bottom: 16px;">My Tasks</h3>
+        <div id="my-tasks-list">
+            <div style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 20px;">No tasks assigned to you yet.</div>
+        </div>
+    </main>
+
     <main id="files" class="content">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
             <h3 style="margin: 0;">File Manager</h3>
@@ -679,6 +703,11 @@
             <i data-lucide="users"></i>
             <span>Members</span>
         </a>
+        <a class="nav-item" onclick="app.navigate('tasks')">
+            <i data-lucide="list-checks"></i>
+            <span>Tasks</span>
+            <div id="task-badge" style="display:none; position:absolute; top:2px; right:10px; background:var(--busy); width:8px; height:8px; border-radius:50%;"></div>
+        </a>
         <a class="nav-item" onclick="app.navigate('settings')">
             <i data-lucide="settings"></i>
             <span>More</span>
@@ -768,6 +797,7 @@
             },
 
             handleMessage(d) {
+                console.log("WS RX:", d.type, d);
                 switch(d.type) {
                     case "registered":
                         this.isHost = d.is_host;
@@ -830,6 +860,10 @@
                         this.addActivity(`📢 ${d.message}`);
                         this.speak(`Announcement: ${d.message}`);
                         break;
+
+                    case "task_assigned":
+                        this.handleNewTask(d);
+                        break;
                 }
             },
 
@@ -839,8 +873,10 @@
 
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                 const navItems = document.querySelectorAll('.nav-item');
-                const index = ['home', 'chat', 'files', 'members', 'settings'].indexOf(panelId);
+                const index = ['home', 'chat', 'files', 'members', 'tasks', 'settings'].indexOf(panelId);
                 if (index !== -1) navItems[index].classList.add('active');
+
+                if (panelId === 'tasks') $("task-badge").style.display = 'none';
             },
 
             send(payload) {
@@ -910,6 +946,9 @@
             },
 
             updatePresence(users, settings) {
+                this.members = users;
+                this.updateTaskDropdown();
+
                 $("member-list").innerHTML = "";
                 users.forEach(u => {
                     const div = document.createElement("div");
@@ -934,6 +973,67 @@
                     $("toggleFiles").checked = settings.file_sharing_enabled;
                     $("toggleLock").checked = settings.room_locked;
                 }
+            },
+
+            updateTaskDropdown() {
+                const select = $("taskMemberSelect");
+                if (!select) return;
+                const currentVal = select.value;
+                select.innerHTML = '<option value="all">Everyone</option>';
+                (this.members || []).forEach(m => {
+                    if (m.device_id !== this.id) {
+                        const opt = document.createElement("option");
+                        opt.value = m.device_id;
+                        opt.textContent = m.device_name;
+                        select.appendChild(opt);
+                    }
+                });
+                select.value = currentVal;
+            },
+
+            assignTask() {
+                const targetId = $("taskMemberSelect").value;
+                const task = $("taskInput").value.trim();
+                if (!task) return;
+
+                console.log("Assigning task to", targetId, ":", task);
+                this.send({
+                    type: "assign_task",
+                    target_id: targetId,
+                    task: task
+                });
+
+                $("taskInput").value = "";
+                this.addActivity(`Assigned task: ${task}`);
+                alert("Task assigned!");
+            },
+
+            handleNewTask(d) {
+                console.log("New Task Received:", d);
+                this.speak(`New task from ${d.from_name}: ${d.task}`);
+                this.addActivity(`New task: ${d.task}`);
+
+                // Show badge if not on tasks tab
+                const tasksMain = $("tasks");
+                if (tasksMain && !tasksMain.classList.contains("active")) {
+                    $("task-badge").style.display = 'block';
+                }
+
+                const list = $("my-tasks-list");
+                if (list.innerHTML.includes("No tasks assigned")) list.innerHTML = "";
+
+                const div = document.createElement("div");
+                div.className = "premium-card";
+                div.style.marginBottom = "12px";
+                div.style.borderLeft = "4px solid var(--primary)";
+                div.innerHTML = `
+                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">From ${d.from_name} • ${new Date(d.timestamp).toLocaleTimeString()}</div>
+                    <div style="font-weight: 500;">${this.escape(d.task)}</div>
+                    <div style="margin-top: 10px; display: flex; gap: 8px;">
+                        <button class="btn btn-green" style="padding: 6px 12px; font-size: 11px;" onclick="this.parentElement.parentElement.remove(); app.addActivity('Completed task: ${this.escape(d.task)}')">Done</button>
+                    </div>
+                `;
+                list.prepend(div);
             },
 
             async loadFiles() {

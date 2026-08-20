@@ -1,0 +1,13 @@
+body { overflow: hidden; touch-action: none; background: #000; }
+#game-ui { width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; }
+.game-header { width: 100%; max-width: 600px; padding: 15px; display: flex; justify-content: space-between; align-items: center; color: #00f2ff; font-family: monospace; }
+.stats { text-align: center; }
+#speed-meter { font-size: 0.8rem; color: #7000ff; }
+canvas { background: #111; border-left: 2px solid #333; border-right: 2px solid #333; }
+.overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); padding: 30px; border: 2px solid #00f2ff; border-radius: 15px; text-align: center; min-width: 280px; z-index: 100; }
+.hidden { display: none; }
+.main-btn { width: 100%; padding: 12px; margin-top: 15px; background: #00f2ff; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+.main-btn.secondary { background: #333; color: #fff; }
+.mobile-controls { position: fixed; bottom: 30px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; pointer-events: none; }
+.ctrl-btn { width: 70px; height: 70px; border-radius: 50%; background: rgba(0,242,255,0.2); border: 2px solid #00f2ff; color: #00f2ff; pointer-events: auto; }
+@media (min-width: 769px) { .mobile-controls { display: none; } }

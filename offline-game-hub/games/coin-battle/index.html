@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Coin Battle | Neon Arcade</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-ui">
+        <div class="game-header">
+            <button onclick="location.href='../../index.html'" class="nav-btn">🏠 Hub</button>
+            <div id="scores">P1: 0 | P2: 0</div>
+            <div id="timer">60s</div>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="start-screen" class="overlay">
+            <h1 class="glow-text">COIN BATTLE</h1>
+            <div class="controls-guide">
+                <div class="p-guide">
+                    <h3 style="color: #00f2ff;">P1 (LEFT)</h3>
+                    <p>WASD to Move</p>
+                </div>
+                <div class="p-guide">
+                    <h3 style="color: #f85149;">P2 (RIGHT)</h3>
+                    <p>Arrows to Move</p>
+                </div>
+            </div>
+            <p>Collect the most coins before time runs out!</p>
+            <button id="start-btn" class="main-btn">START BATTLE</button>
+        </div>
+
+        <div id="game-over" class="overlay hidden">
+            <h1 id="win-message" class="glow-text">PLAYER 1 WINS!</h1>
+            <p id="final-scores">P1: 0 | P2: 0</p>
+            <button id="restart-btn" class="main-btn">REMATCH</button>
+            <button onclick="location.href='../../index.html'" class="main-btn secondary">HUB</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

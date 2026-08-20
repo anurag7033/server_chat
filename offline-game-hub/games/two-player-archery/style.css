@@ -1,0 +1,16 @@
+body { background: #0a0b10; overflow: hidden; touch-action: none; }
+#game-ui { width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+
+.game-header { width: 100%; max-width: 800px; padding: 15px; display: flex; justify-content: space-between; align-items: center; color: #00f2ff; font-weight: bold; position: absolute; top: 0; z-index: 10; }
+#turn-indicator { color: #d29922; font-size: 1.2rem; }
+
+canvas { background: #050505; border: 2px solid #30363d; box-shadow: var(--neon-shadow); }
+
+.controls-guide { display: flex; gap: 40px; margin: 20px 0; }
+.p-guide { text-align: left; }
+
+.overlay { background: rgba(0,0,0,0.9); border: 2px solid #00f2ff; padding: 40px; border-radius: 20px; text-align: center; z-index: 100; min-width: 400px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.hidden { display: none !important; }
+
+.main-btn { width: 100%; padding: 15px; margin-top: 20px; background: #00f2ff; color: #000; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; font-size: 1.2rem; }
+.main-btn.secondary { background: #333; color: #fff; }

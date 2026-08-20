@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zombie Survival | Neon Arcade</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-ui">
+        <div class="game-header">
+            <button onclick="location.href='../../index.html'" class="nav-btn">🏠 Hub</button>
+            <div class="survival-stats">
+                <div class="stat-group">
+                    <div class="label">❤️ HP</div>
+                    <div class="bar-bg"><div id="hp-bar" class="bar hp"></div></div>
+                </div>
+                <div class="stat-group">
+                    <div class="label">🍗 HUNGER</div>
+                    <div class="bar-bg"><div id="hunger-bar" class="bar hunger"></div></div>
+                </div>
+            </div>
+            <div id="timer">SURVIVED: 0s</div>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="start-screen" class="overlay">
+            <h1 class="glow-text">ZOMBIE SURVIVAL</h1>
+            <p>Survive as long as possible!</p>
+            <p>Collect Food (🍗) and Meds (💊)</p>
+            <p>Move: WASD | Aim: Mouse | Shoot: Click</p>
+            <button id="start-btn" class="main-btn">START SURVIVAL</button>
+        </div>
+
+        <div id="game-over" class="overlay hidden">
+            <h1 class="glow-text" style="color: #f85149;">DIED!</h1>
+            <p id="final-time">Survived: 0s</p>
+            <button id="restart-btn" class="main-btn">TRY AGAIN</button>
+            <button onclick="location.href='../../index.html'" class="main-btn secondary">HUB</button>
+        </div>
+
+        <div id="inventory">
+            <span>Ammo: <span id="ammo-count">30</span></span>
+            <span>Day: <span id="day-count">1</span></span>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

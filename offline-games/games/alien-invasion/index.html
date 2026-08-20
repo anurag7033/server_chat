@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Alien Invasion | Neon Arcade</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-ui">
+        <div class="game-header">
+            <button onclick="location.href='../../index.html'" class="nav-btn">🏠 Hub</button>
+            <div id="stats">
+                <span>Score: <span id="score">0</span></span>
+                <span>Aliens: <span id="alien-count">0</span></span>
+            </div>
+            <div id="lives">❤️❤️❤️</div>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="start-screen" class="overlay">
+            <h1 class="glow-text">ALIEN INVASION</h1>
+            <p>Move: Arrows / A-D | Shoot: Space / Tap</p>
+            <p>Stop the aliens before they land!</p>
+            <button id="start-btn" class="main-btn">START DEFENSE</button>
+        </div>
+
+        <div id="game-over" class="overlay hidden">
+            <h1 class="glow-text" style="color: #f85149;">INVASION SUCCESSFUL</h1>
+            <p id="final-score">Final Score: 0</p>
+            <button id="restart-btn" class="main-btn">RETRY</button>
+            <button onclick="location.href='../../index.html'" class="main-btn secondary">HUB</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

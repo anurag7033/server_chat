@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Space Survival | Neon Arcade</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-ui">
+        <div class="game-header">
+            <button onclick="location.href='../../index.html'" class="nav-btn">🏠 Hub</button>
+            <div id="stats">
+                <span>XP: <span id="xp">0</span></span>
+                <span>LVL: <span id="level">1</span></span>
+                <div class="hp-bar-bg"><div id="hp-bar" class="hp-bar"></div></div>
+            </div>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="start-screen" class="overlay">
+            <h1 class="glow-text">VOID SURVIVOR</h1>
+            <p>Move: WASD / Mouse / Touch</p>
+            <p>Your ship fires automatically!</p>
+            <p>Collect XP gems to level up.</p>
+            <button id="start-btn" class="main-btn">ENTER THE VOID</button>
+        </div>
+
+        <div id="game-over" class="overlay hidden">
+            <h1 class="glow-text" style="color: #f85149;">LOST IN SPACE</h1>
+            <p id="final-stats">Level Reached: 1</p>
+            <button id="restart-btn" class="main-btn">RETRY</button>
+            <button onclick="location.href='../../index.html'" class="main-btn secondary">HUB</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

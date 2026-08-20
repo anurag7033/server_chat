@@ -1,0 +1,18 @@
+body { background: #0a0b10; overflow: hidden; touch-action: none; }
+#game-ui { width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+
+.game-header {
+    width: 100%; max-width: 800px; padding: 15px;
+    display: flex; justify-content: space-between; align-items: center;
+    color: #00f2ff; font-weight: bold; font-family: monospace; font-size: 1.1rem;
+}
+#stats { display: flex; gap: 20px; }
+#combo { color: #f2cf66; }
+
+canvas { background: #0d1117; border: 2px solid #30363d; box-shadow: var(--neon-shadow); cursor: crosshair; }
+
+.overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); padding: 30px; border: 2px solid #00f2ff; border-radius: 15px; text-align: center; color: #fff; z-index: 100; min-width: 300px; }
+.hidden { display: none !important; }
+
+.main-btn { width: 100%; padding: 12px; margin-top: 15px; background: #00f2ff; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; color: #000; }
+.main-btn.secondary { background: #333; color: #fff; }

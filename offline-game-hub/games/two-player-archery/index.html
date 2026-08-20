@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>2-Player Archery | Neon Arcade</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-ui">
+        <div class="game-header">
+            <button onclick="location.href='../../index.html'" class="nav-btn">🏠 Hub</button>
+            <div id="scores">P1: 0 | P2: 0</div>
+            <div id="turn-indicator">P1's TURN</div>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="start-screen" class="overlay">
+            <h1 class="glow-text">ARROW DUEL</h1>
+            <div class="controls-guide">
+                <div class="p-guide">
+                    <h3 style="color: #00f2ff;">P1 (LEFT)</h3>
+                    <p>WASD to Aim</p>
+                    <p>SPACE to Fire</p>
+                </div>
+                <div class="p-guide">
+                    <h3 style="color: #7000ff;">P2 (RIGHT)</h3>
+                    <p>ARROWS to Aim</p>
+                    <p>ENTER to Fire</p>
+                </div>
+            </div>
+            <p>Hitting your opponent ends the round. Best of 5 Wins!</p>
+            <button id="start-btn" class="main-btn">START BATTLE</button>
+        </div>
+
+        <div id="game-over" class="overlay hidden">
+            <h1 id="win-message" class="glow-text">PLAYER 1 WINS!</h1>
+            <button id="restart-btn" class="main-btn">REMATCH</button>
+            <button onclick="location.href='../../index.html'" class="main-btn secondary">HUB</button>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
