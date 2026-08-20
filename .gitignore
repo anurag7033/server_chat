@@ -1,0 +1,16 @@
+.idea/
+*.pyc
+__pycache__/
+venv/
+.venv/
+.artifacts/
+backend/transfers/
+backend/uploads/
+*.zip
+*.pdf
+*.jpeg
+*.url
+node_modules/
+dist/
+build/
+.DS_Store

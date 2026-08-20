@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Phone-PC Control Hub</title>
+    <!-- Modern Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #2864e8;
+            --primary-light: #4c84ff;
+            --bg: #0d1117;
+            --card-bg: #161b22;
+            --border: #30363d;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --online: #238636;
+            --away: #d29922;
+            --busy: #da3633;
+            --surface: #21262d;
+            --nav-bg: #0d1117;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Splash Screen */
+        #splash {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .splash-logo {
+            font-size: 64px;
+            margin-bottom: 24px;
+            animation: pulse 2s infinite;
+        }
+
+        .loader {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        /* Join Screen */
+        #join-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .join-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            width: min(400px, 100%);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+
+        /* Layout */
+        .header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg);
+        }
+
+        .header h1 {
+            font-size: 18px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            padding-bottom: 100px; /* Space for nav */
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(13, 17, 23, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            padding-bottom: env(safe-area-inset-bottom, 8px);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item i {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Dashboard */
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .premium-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .premium-card:active {
+            transform: scale(0.97);
+            background: var(--surface);
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .action-card {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 24px;
+            font-weight: 600;
+        }
+
+        .action-card i {
+            width: 32px;
+            height: 32px;
+            color: var(--primary);
+        }
+
+        .active-border {
+            border-color: var(--primary) !important;
+            background: rgba(40, 100, 232, 0.05);
+        }
+
+        /* Chat UI */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 120px);
+            max-height: 100%;
+        }
+
+        .msgs-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .msg-bubble {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .msg-received {
+            background: var(--card-bg);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .msg-sent {
+            background: var(--primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .msg-info {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-bottom: 4px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .msg-time {
+            font-size: 9px;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        .chat-input-row {
+            padding: 12px;
+            display: flex;
+            gap: 10px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            margin-top: 12px;
+            margin-bottom: 64px; /* CLEAR MOBILE NAV */
+            border: 1px solid var(--border);
+        }
+
+        .chat-input-row input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            outline: none;
+            font-size: 14px;
+        }
+
+        /* Members List */
+        .member-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--surface);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary);
+            position: relative;
+        }
+
+        .status-dot {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid var(--card-bg);
+            background: var(--online);
+        }
+
+        /* Form Elements */
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: white;
+            font-family: inherit;
+            margin: 8px 0;
+            transition: var(--transition);
+        }
+
+        input:focus { border-color: var(--primary); outline: none; }
+
+        .btn {
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 14px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-green { background: var(--online); color: white; }
+        .btn-red { background: var(--busy); color: white; }
+
+        /* Activities */
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            border-left: 2px solid var(--primary);
+            background: var(--card-bg);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        /* PC Controls */
+        .pc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .pc-card {
+            padding: 32px 16px;
+            text-align: center;
+        }
+
+        .pc-card i {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 12px;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 800px) {
+            .bottom-nav {
+                width: 360px;
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 24px;
+                background: rgba(22, 27, 34, 0.9);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-md);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                padding-bottom: 8px;
+            }
+            .header { padding: 24px 60px; }
+            .content { padding: 24px 60px; padding-bottom: 120px; }
+            .chat-input-row { margin-bottom: 80px; }
+            .chat-container { height: calc(100vh - 180px); }
+        }
+
+        /* Typing indicator */
+        .typing-indicator { font-size: 12px; color: var(--text-muted); padding: 4px 8px; }
+
+        /* Host Badge */
+        .host-badge {
+            background: rgba(40, 100, 232, 0.2);
+            color: var(--primary);
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 99px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Splash Screen -->
+    <div id="splash">
+        <div class="splash-logo">🖥️</div>
+        <div style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Phone-PC Control</div>
+        <div style="color: var(--text-muted); margin-bottom: 32px;">Connect. Share. Control.</div>
+        <div class="loader"></div>
+    </div>
+
+    <!-- Join Screen -->
+    <div id="join-screen">
+        <div class="join-card">
+            <div style="font-size: 48px; margin-bottom: 16px;">🏠</div>
+            <h2 style="margin: 0 0 8px 0;">Local Network Room</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Chat, share files and control your PC from anywhere on your Wi-Fi.</p>
+
+            <input type="text" id="nameInput" placeholder="Enter your name" maxlength="32">
+            <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="app.connect()">
+                <i data-lucide="message-square"></i> Join Local Room
+            </button>
+        </div>
+    </div>
+
+    <!-- App Header -->
+    <header class="header">
+        <h1>🖥️ Control Hub</h1>
+        <div id="conn-status" style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--online);">
+            <div style="width: 8px; height: 8px; border-radius: 50%; background: currentColor;"></div>
+            Connected
+        </div>
+    </header>
+
+    <!-- Main Content Areas -->
+    <main id="home" class="content active">
+        <div class="premium-card" style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="font-size: 12px; color: var(--text-muted);">Local Server</div>
+                    <div id="server-ip" style="font-weight: 600;">Detecting...</div>
+                </div>
+                <button class="btn btn-primary" style="padding: 8px 12px;" onclick="app.connect()">
+                    <i data-lucide="refresh-cw" style="width: 16px; height: 16px;"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <div class="premium-card action-card" onclick="app.navigate('chat')">
+                <i data-lucide="message-circle"></i>
+                <span>Chat</span>
+            </div>
+            <div class="premium-card action-card" onclick="app.navigate('files')">
+                <i data-lucide="folder"></i>
+                <span>Files</span>
+            </div>
+            <div class="premium-card action-card" onclick="app.navigate('clip')">
+                <i data-lucide="clipboard"></i>
+                <span>Clipboard</span>
+            </div>
+            <div class="premium-card action-card" onclick="app.navigate('pc')">
+                <i data-lucide="monitor"></i>
+                <span>PC Control</span>
+            </div>
+            <div class="premium-card action-card" onclick="app.showCreateRoom()">
+                <i data-lucide="lock" style="color: var(--primary-light);"></i>
+                <span>Create Private</span>
+            </div>
+            <div class="premium-card action-card" onclick="app.showJoinRoom()">
+                <i data-lucide="key" style="color: var(--away);"></i>
+                <span>Join Private</span>
+            </div>
+        </div>
+
+        <div id="joined-rooms-section" style="display: none; margin-top: 32px;">
+            <h3 style="font-size: 16px; margin-bottom: 16px;">My Private Rooms</h3>
+            <div id="joined-rooms-list" class="quick-actions"></div>
+        </div>
+
+        <h3 style="margin: 32px 0 16px 0; font-size: 16px;">Activity Timeline</h3>
+        <div id="activity-log"></div>
+    </main>
+
+    <main id="chat" class="content">
+        <div id="private-room-header" style="display: none; margin-bottom: 16px;" class="premium-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div id="active-room-name" style="font-weight: 700;">Public Room</div>
+                    <div id="active-room-key" style="font-size: 11px; color: var(--text-muted);">Local LAN</div>
+                </div>
+                <button class="btn btn-red" style="padding: 8px 12px; font-size: 12px;" onclick="app.leavePrivateRoom()">
+                    Leave
+                </button>
+            </div>
+        </div>
+
+        <div class="chat-container">
+            <div id="chat-msgs" class="msgs-area"></div>
+            <div id="typing-status" class="typing-indicator"></div>
+            <div class="chat-input-row">
+                <button style="background: transparent; border: none; color: var(--text-muted); cursor: pointer;">
+                    <i data-lucide="plus" style="width: 20px;"></i>
+                </button>
+                <input type="text" id="chatInput" placeholder="Message..." oninput="app.handleTyping()">
+                <button onclick="app.sendMessage()" style="background: transparent; border: none; color: var(--primary); cursor: pointer;">
+                    <i data-lucide="send" style="width: 20px;"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <main id="members" class="content">
+        <h3 style="font-size: 18px; margin-bottom: 20px;">Online Devices</h3>
+        <div id="member-list"></div>
+    </main>
+
+    <main id="files" class="content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h3 style="margin: 0;">File Manager</h3>
+            <button class="btn btn-primary" onclick="$('fileInput').click()">
+                <i data-lucide="upload"></i> Upload
+            </button>
+        </div>
+        <input type="file" id="fileInput" style="display: none;" onchange="app.uploadFile()">
+
+        <div id="upload-status" style="display: none; margin-bottom: 20px;" class="premium-card">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span id="upload-name">File name</span>
+                <span id="upload-pct">0%</span>
+            </div>
+            <div style="height: 4px; background: var(--border); border-radius: 9px; overflow: hidden;">
+                <div id="upload-bar" style="width: 0%; height: 100%; background: var(--primary);"></div>
+            </div>
+        </div>
+
+        <div id="file-list"></div>
+    </main>
+
+    <main id="clip" class="content">
+        <h3 style="margin-bottom: 16px;">Broadcast Clipboard</h3>
+        <textarea id="clipInput" placeholder="Paste or type text to share..." style="min-height: 120px;"></textarea>
+        <button class="btn btn-primary" style="width: 100%; margin-top: 12px;" onclick="app.shareClipboard()">
+            <i data-lucide="share-2"></i> Share to Everyone
+        </button>
+
+        <h3 style="margin: 32px 0 16px 0; font-size: 16px;">History</h3>
+        <div id="clip-history"></div>
+    </main>
+
+    <main id="pc" class="content">
+        <div class="premium-card" style="text-align: center; margin-bottom: 24px; padding: 32px;">
+            <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">Active Host</div>
+            <div id="host-name" style="font-size: 20px; font-weight: 700;">Host PC</div>
+        </div>
+
+        <div class="pc-grid">
+            <div class="premium-card pc-card" onclick="app.pcControl('lock')">
+                <i data-lucide="lock" style="color: var(--away);"></i>
+                <div>Lock PC</div>
+            </div>
+            <div class="premium-card pc-card" onclick="app.pcControl('sleep')">
+                <i data-lucide="moon" style="color: var(--primary-light);"></i>
+                <div>Sleep</div>
+            </div>
+            <div class="premium-card pc-card" onclick="app.pcControl('restart')">
+                <i data-lucide="refresh-cw" style="color: var(--online);"></i>
+                <div>Restart</div>
+            </div>
+            <div class="premium-card pc-card" onclick="app.pcControl('shutdown')">
+                <i data-lucide="power" style="color: var(--busy);"></i>
+                <div>Shutdown</div>
+            </div>
+        </div>
+
+        <!-- Host Specific Controls -->
+        <div id="host-panel" style="display: none; margin-top: 32px;">
+            <h3 style="font-size: 16px; margin-bottom: 16px;">Room Management</h3>
+            <div class="premium-card" style="display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Enable Chat</span>
+                    <input type="checkbox" id="toggleChat" style="width: auto;" onchange="app.setRoomSetting('chat_enabled', this.checked)">
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>File Sharing</span>
+                    <input type="checkbox" id="toggleFiles" style="width: auto;" onchange="app.setRoomSetting('file_sharing_enabled', this.checked)">
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Lock Room</span>
+                    <input type="checkbox" id="toggleLock" style="width: auto;" onchange="app.setRoomSetting('room_locked', this.checked)">
+                </div>
+                <hr style="border: none; border-top: 1px solid var(--border); margin: 8px 0;">
+                <button class="btn btn-red" onclick="app.clearRoomData('chat')">Clear Chat History</button>
+                <button class="btn btn-red" onclick="app.clearRoomData('files')">Delete All Files</button>
+            </div>
+        </div>
+    </main>
+
+    <main id="settings" class="content">
+        <h3 style="margin-bottom: 24px;">App Settings</h3>
+
+        <div class="premium-card" style="margin-bottom: 16px;">
+            <div style="font-weight: 600; margin-bottom: 16px;">Notifications</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <span>Voice Alerts (TTS)</span>
+                <input type="checkbox" id="ttsToggle" style="width: auto;" checked>
+            </div>
+        </div>
+
+        <div class="premium-card" style="margin-bottom: 16px;">
+            <div style="font-weight: 600; margin-bottom: 16px;">Personalization</div>
+            <label style="font-size: 12px; color: var(--text-muted);">Display Name</label>
+            <input type="text" id="settingsName" placeholder="Your name">
+            <button class="btn btn-primary" style="width: 100%; margin-top: 8px;" onclick="app.updateName()">Save Name</button>
+        </div>
+
+        <div class="premium-card">
+            <div style="font-weight: 600; margin-bottom: 8px;">About</div>
+            <div style="font-size: 13px; color: var(--text-muted);">Version 3.5.0 Premium</div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;" id="device-id-label">Device ID: -</div>
+        </div>
+    </main>
+
+    <!-- Navigation -->
+    <nav class="bottom-nav">
+        <a class="nav-item active" onclick="app.navigate('home')">
+            <i data-lucide="home"></i>
+            <span>Home</span>
+        </a>
+        <a class="nav-item" onclick="app.navigate('chat')">
+            <i data-lucide="message-square"></i>
+            <span>Chat</span>
+        </a>
+        <a class="nav-item" onclick="app.navigate('files')">
+            <i data-lucide="folder-open"></i>
+            <span>Files</span>
+        </a>
+        <a class="nav-item" onclick="app.navigate('members')">
+            <i data-lucide="users"></i>
+            <span>Members</span>
+        </a>
+        <a class="nav-item" onclick="app.navigate('settings')">
+            <i data-lucide="settings"></i>
+            <span>More</span>
+        </a>
+    </nav>
+
+    <script>
+        const $ = (id) => document.getElementById(id);
+
+        const app = {
+            ws: null,
+            id: null,
+            name: null,
+            isHost: false,
+            hostToken: null,
+            members: [],
+            typingTimer: null,
+            voiceEnabled: true,
+
+            // Private Rooms State
+            activeRoom: "public",
+            joinedRooms: {}, // room_id -> { name, key, unread, messages, members }
+            publicMessages: [],
+            publicUnread: 0,
+
+            init() {
+                this.id = localStorage.getItem("pcDeviceId") || ("DEV-" + Math.random().toString(36).substring(2, 10).toUpperCase());
+                localStorage.setItem("pcDeviceId", this.id);
+                this.name = localStorage.getItem("pcDeviceName") || "";
+
+                $("nameInput").value = this.name;
+                $("settingsName").value = this.name;
+                $("device-id-label").textContent = "Device ID: " + this.id;
+
+                lucide.createIcons();
+
+                // Splash timeout
+                setTimeout(() => {
+                    $("splash").style.opacity = '0';
+                    setTimeout(() => $("splash").style.display = 'none', 500);
+                }, 1500);
+
+                if (this.name) {
+                    this.connect();
+                } else {
+                    $("join-screen").style.display = 'flex';
+                }
+
+                this.fetchHealth();
+            },
+
+            async fetchHealth() {
+                try {
+                    const r = await fetch('/api/health');
+                    const d = await r.json();
+                    $("server-ip").textContent = d.local_ip + ":8000";
+                } catch {
+                    $("server-ip").textContent = "Local Server Offline";
+                }
+            },
+
+            connect() {
+                this.name = $("nameInput").value.trim() || $("settingsName").value.trim() || "Guest";
+                localStorage.setItem("pcDeviceName", this.name);
+                $("join-screen").style.display = 'none';
+
+                if (this.ws) this.ws.close();
+
+                const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+                this.ws = new WebSocket(`${protocol}://${location.host}/ws`);
+
+                this.ws.onopen = () => {
+                    this.send({
+                        type: "register",
+                        device_id: this.id,
+                        device_name: this.name,
+                        status: "online"
+                    });
+                };
+
+                this.ws.onmessage = (e) => this.handleMessage(JSON.parse(e.data));
+
+                this.ws.onclose = () => {
+                    this.updateStatus("Offline", false);
+                    setTimeout(() => this.connect(), 3000);
+                };
+            },
+
+            handleMessage(d) {
+                switch(d.type) {
+                    case "registered":
+                        this.isHost = d.is_host;
+                        this.hostToken = d.host_token;
+                        if (this.isHost) {
+                            $("host-panel").style.display = 'block';
+                            $("host-name").textContent = "Server PC (Host)";
+                        }
+                        this.publicMessages = d.messages || [];
+                        this.renderMessages(this.publicMessages);
+                        this.renderClipboardHistory(d.clipboard_history);
+                        this.updatePresence(d.users, d.settings);
+                        this.loadFiles();
+                        break;
+
+                    case "chat_message":
+                        this.publicMessages.push(d);
+                        if (this.activeRoom === "public") this.appendMessage(d);
+                        else this.addUnread("public");
+                        break;
+
+                    case "private_chat_message":
+                        this.handlePrivateMessage(d);
+                        break;
+
+                    case "private_room_created":
+                    case "private_room_joined":
+                        this.handleJoinRoom(d);
+                        break;
+
+                    case "private_room_error":
+                        alert(d.message);
+                        break;
+
+                    case "presence":
+                        this.updatePresence(d.users, d.settings);
+                        break;
+
+                    case "system":
+                        this.addActivity(d.message);
+                        this.speak(d.message);
+                        break;
+
+                    case "clipboard":
+                        this.renderClipboardItem(d, true);
+                        this.speak(`${d.device_name} shared clipboard`);
+                        break;
+
+                    case "typing":
+                        $("typing-status").textContent = d.active ? `${d.device_name} is typing...` : "";
+                        break;
+
+                    case "file_uploaded":
+                        this.loadFiles();
+                        this.addActivity(`${d.file.uploader_name} uploaded ${d.file.name}`);
+                        this.speak(`${d.file.uploader_name} shared a file`);
+                        break;
+
+                    case "announcement":
+                        this.addActivity(`📢 ${d.message}`);
+                        this.speak(`Announcement: ${d.message}`);
+                        break;
+                }
+            },
+
+            navigate(panelId) {
+                document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+                $(panelId).classList.add('active');
+
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                const navItems = document.querySelectorAll('.nav-item');
+                const index = ['home', 'chat', 'files', 'members', 'settings'].indexOf(panelId);
+                if (index !== -1) navItems[index].classList.add('active');
+            },
+
+            send(payload) {
+                if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+                    this.ws.send(JSON.stringify(payload));
+                }
+            },
+
+            sendMessage() {
+                const input = $("chatInput");
+                if (!input.value.trim()) return;
+
+                const payload = {
+                    type: this.activeRoom === "public" ? "chat_message" : "private_chat_message",
+                    message: input.value
+                };
+                if (this.activeRoom !== "public") payload.room_id = this.activeRoom;
+
+                this.send(payload);
+                input.value = "";
+                this.handleTyping(false);
+            },
+
+            handleTyping(force = true) {
+                const payload = {
+                    type: this.activeRoom === "public" ? "typing" : "private_typing",
+                    active: force && $("chatInput").value.length > 0
+                };
+                if (this.activeRoom !== "public") payload.room_id = this.activeRoom;
+
+                this.send(payload);
+                clearTimeout(this.typingTimer);
+                if (force) this.typingTimer = setTimeout(() => this.handleTyping(false), 2000);
+            },
+
+            renderMessages(msgs) {
+                $("chat-msgs").innerHTML = "";
+                (msgs || []).forEach(m => this.appendMessage(m));
+            },
+
+            appendMessage(m) {
+                const isMine = m.device_id === this.id;
+                const div = document.createElement("div");
+                div.className = `msg-bubble ${isMine ? 'msg-sent' : 'msg-received'}`;
+
+                div.innerHTML = `
+                    <div class="msg-info">
+                        <span>${m.device_name}</span>
+                        ${m.is_host ? '<span class="host-badge">Host</span>' : ''}
+                        ${m.is_owner ? '<span class="host-badge" style="background:rgba(156,39,176,0.2); color:#9c27b0;">Owner</span>' : ''}
+                    </div>
+                    <div class="msg-text">${this.escape(m.message)}</div>
+                    <div class="msg-time">${new Date(m.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+                `;
+
+                $("chat-msgs").appendChild(div);
+                $("chat-msgs").scrollTop = $("chat-msgs").scrollHeight;
+            },
+
+            addActivity(msg) {
+                const div = document.createElement("div");
+                div.className = "activity-item";
+                div.innerHTML = `<i data-lucide="info" style="width: 14px; color: var(--primary);"></i> <span>${msg}</span>`;
+                $("activity-log").prepend(div);
+                lucide.createIcons();
+                while ($("activity-log").children.length > 10) $("activity-log").lastElementChild.remove();
+            },
+
+            updatePresence(users, settings) {
+                $("member-list").innerHTML = "";
+                users.forEach(u => {
+                    const div = document.createElement("div");
+                    div.className = "member-item";
+                    div.innerHTML = `
+                        <div class="avatar">
+                            ${u.device_name[0].toUpperCase()}
+                            <div class="status-dot" style="background: var(--${u.status});"></div>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">${u.device_name} ${u.device_id === this.id ? '(You)' : ''}</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">${u.is_host ? 'Host PC' : 'Member Device'}</div>
+                        </div>
+                        ${u.is_host ? '<i data-lucide="monitor" style="width: 16px; color: var(--primary);"></i>' : ''}
+                    `;
+                    $("member-list").appendChild(div);
+                });
+                lucide.createIcons();
+
+                if (settings) {
+                    $("toggleChat").checked = settings.chat_enabled;
+                    $("toggleFiles").checked = settings.file_sharing_enabled;
+                    $("toggleLock").checked = settings.room_locked;
+                }
+            },
+
+            async loadFiles() {
+                try {
+                    const r = await fetch('/api/files');
+                    const d = await r.json();
+                    $("file-list").innerHTML = "";
+                    (d.files || []).forEach(f => {
+                        const div = document.createElement("div");
+                        div.className = "member-item";
+                        div.innerHTML = `
+                            <i data-lucide="file-text" style="color: var(--primary);"></i>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${f.name}</div>
+                                <div style="font-size: 11px; color: var(--text-muted);">${(f.size/1024/1024).toFixed(1)} MB</div>
+                            </div>
+                            <a href="${f.url}" download class="btn btn-primary" style="padding: 8px;">
+                                <i data-lucide="download" style="width: 16px;"></i>
+                            </a>
+                        `;
+                        $("file-list").appendChild(div);
+                    });
+                    lucide.createIcons();
+                } catch {}
+            },
+
+            uploadFile() {
+                const file = $("fileInput").files[0];
+                if (!file) return;
+
+                const fd = new FormData();
+                fd.append("file", file);
+                fd.append("device_id", this.id);
+                fd.append("device_name", this.name);
+
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "/api/files/upload");
+
+                $("upload-status").style.display = 'block';
+                $("upload-name").textContent = file.name;
+
+                xhr.upload.onprogress = (e) => {
+                    const pct = Math.round((e.loaded / e.total) * 100);
+                    $("upload-pct").textContent = pct + "%";
+                    $("upload-bar").style.width = pct + "%";
+                };
+
+                xhr.onload = () => {
+                    $("upload-status").style.display = 'none';
+                    this.loadFiles();
+                };
+
+                xhr.send(fd);
+            },
+
+            shareClipboard() {
+                const val = $("clipInput").value.trim();
+                if (!val) return;
+                this.send({ type: "clipboard_share", text: val });
+                $("clipInput").value = "";
+            },
+
+            renderClipboardHistory(items) {
+                $("clip-history").innerHTML = "";
+                (items || []).slice().reverse().forEach(i => this.renderClipboardItem(i));
+            },
+
+            renderClipboardItem(i, prepend = false) {
+                const div = document.createElement("div");
+                div.className = "premium-card";
+                div.style.marginBottom = "12px";
+                div.innerHTML = `
+                    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">From ${i.device_name} • ${new Date(i.timestamp).toLocaleTimeString()}</div>
+                    <div style="font-size: 14px; white-space: pre-wrap; margin-bottom: 12px;">${this.escape(i.text)}</div>
+                    <button class="btn btn-primary" style="width: 100%; padding: 8px;" onclick="app.copyToPC('${this.escape(i.text)}')">Copy to PC Clipboard</button>
+                `;
+                if (prepend) $("clip-history").prepend(div);
+                else $("clip-history").appendChild(div);
+            },
+
+            async copyToPC(text) {
+                const r = await fetch("/api/clipboard", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({ text })
+                });
+                if (r.ok) alert("Copied to Host PC Clipboard");
+            },
+
+            async pcControl(action) {
+                if (!confirm(`Confirm ${action} for the Host PC?`)) return;
+                const r = await fetch("/api/pc/control", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Host-Token": this.hostToken || ""
+                    },
+                    body: JSON.stringify({ action, confirm: true })
+                });
+                const d = await r.json();
+                alert(d.message || "Action sent");
+            },
+
+            setRoomSetting(key, value) {
+                this.send({ type: "host_setting", key, value });
+            },
+
+            async clearRoomData(type) {
+                if (!confirm(`Delete all room ${type}?`)) return;
+                const url = type === 'chat' ? '/api/host/clear-chat' : '/api/host/clear-files';
+                await fetch(url, {
+                    method: "POST",
+                    headers: {"X-Host-Token": this.hostToken || ""}
+                });
+            },
+
+            updateStatus(txt, ok) {
+                $("conn-status").textContent = txt;
+                $("conn-status").style.color = ok ? 'var(--online)' : 'var(--busy)';
+            },
+
+            updateName() {
+                this.name = $("settingsName").value.trim();
+                localStorage.setItem("pcDeviceName", this.name);
+                alert("Settings saved. Reconnecting...");
+                location.reload();
+            },
+
+            speak(text) {
+                if ($("ttsToggle").checked && 'speechSynthesis' in window) {
+                    const u = new SpeechSynthesisUtterance(text);
+                    u.rate = 1;
+                    speechSynthesis.speak(u);
+                }
+            },
+
+            // --- Private Room Actions ---
+            showCreateRoom() {
+                const name = prompt("Enter Private Room Name:", "My Project");
+                if (name) this.send({ type: "create_private_room", room_name: name });
+            },
+
+            showJoinRoom() {
+                const key = prompt("Enter 4-Digit Room Key:");
+                if (key && /^\d{4}$/.test(key)) {
+                    this.send({ type: "join_private_room", room_key: key });
+                } else if (key) {
+                    alert("Invalid key. Exactly 4 digits required.");
+                }
+            },
+
+            handleJoinRoom(d) {
+                this.joinedRooms[d.room_id] = {
+                    id: d.room_id,
+                    name: d.room_name,
+                    key: d.room_key,
+                    isOwner: d.is_owner,
+                    unread: 0,
+                    messages: d.messages || []
+                };
+                this.renderJoinedRooms();
+                this.switchToRoom(d.room_id);
+            },
+
+            handlePrivateMessage(d) {
+                if (this.joinedRooms[d.room_id]) {
+                    this.joinedRooms[d.room_id].messages.push(d);
+                    if (this.activeRoom === d.room_id) {
+                        this.appendMessage(d);
+                    } else {
+                        this.addUnread(d.room_id);
+                    }
+                }
+            },
+
+            addUnread(roomId) {
+                if (roomId === "public") {
+                    this.publicUnread++;
+                } else if (this.joinedRooms[roomId]) {
+                    this.joinedRooms[roomId].unread++;
+                }
+                this.renderJoinedRooms();
+            },
+
+            switchToRoom(roomId) {
+                this.activeRoom = roomId;
+                $("chat-msgs").innerHTML = "";
+
+                if (roomId === "public") {
+                    this.publicUnread = 0;
+                    $("private-room-header").style.display = 'none';
+                    this.publicMessages.forEach(m => this.appendMessage(m));
+                } else {
+                    const room = this.joinedRooms[roomId];
+                    room.unread = 0;
+                    $("private-room-header").style.display = 'block';
+                    $("active-room-name").textContent = room.name;
+                    $("active-room-key").textContent = "Key: " + room.key;
+                    room.messages.forEach(m => this.appendMessage(m));
+                }
+                this.renderJoinedRooms();
+                this.navigate('chat');
+            },
+
+            leavePrivateRoom() {
+                if (this.activeRoom === "public") return;
+                if (confirm("Leave this private room?")) {
+                    this.send({ type: "leave_private_room", room_id: this.activeRoom });
+                    delete this.joinedRooms[this.activeRoom];
+                    this.activeRoom = "public";
+                    this.renderJoinedRooms();
+                    this.switchToRoom("public");
+                }
+            },
+
+            renderJoinedRooms() {
+                const list = $("joined-rooms-list");
+                const section = $("joined-rooms-section");
+                list.innerHTML = "";
+
+                const roomIds = Object.keys(this.joinedRooms);
+                if (roomIds.length === 0) {
+                    section.style.display = 'none';
+                    return;
+                }
+
+                section.style.display = 'block';
+
+                // Add Public Room shortcut if not active
+                if (this.activeRoom !== "public") {
+                    const pub = document.createElement("div");
+                    pub.className = "premium-card action-card";
+                    pub.style.position = 'relative';
+                    pub.onclick = () => this.switchToRoom("public");
+                    pub.innerHTML = `
+                        <i data-lucide="globe"></i>
+                        <span>Public Room</span>
+                        ${this.publicUnread > 0 ? `<div style="position:absolute; top:-5px; right:-5px; background:var(--busy); color:white; font-size:10px; padding:2px 6px; border-radius:10px;">${this.publicUnread}</div>` : ''}
+                    `;
+                    list.appendChild(pub);
+                }
+
+                roomIds.forEach(id => {
+                    const room = this.joinedRooms[id];
+                    const div = document.createElement("div");
+                    div.className = `premium-card action-card ${this.activeRoom === id ? 'active-border' : ''}`;
+                    div.style.position = 'relative';
+                    div.onclick = () => this.switchToRoom(id);
+
+                    div.innerHTML = `
+                        <i data-lucide="lock" style="color: var(--primary-light);"></i>
+                        <span>${room.name}</span>
+                        ${room.unread > 0 ? `<div style="position:absolute; top:-5px; right:-5px; background:var(--busy); color:white; font-size:10px; padding:2px 6px; border-radius:10px;">${room.unread}</div>` : ''}
+                    `;
+                    list.appendChild(div);
+                });
+                lucide.createIcons();
+            },
+
+            escape(str) {
+                const d = document.createElement('div');
+                d.textContent = str;
+                return d.innerHTML;
+            }
+        };
+
+        app.init();
+    </script>
+</body>
+</html>
