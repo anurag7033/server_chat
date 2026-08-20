@@ -716,6 +716,33 @@
             </div>
         </div>
 
+        <div id="snake-container" class="premium-card" style="display: none; padding: 12px; text-align: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <button class="btn" style="padding: 8px; background: transparent; color: var(--text-muted);" onclick="app.snake.back()">
+                    <i data-lucide="arrow-left"></i>
+                </button>
+                <div id="snake-score" style="font-weight: 700; color: var(--primary);">Score: 0</div>
+                <div style="width: 32px;"></div>
+            </div>
+
+            <canvas id="snake-canvas" width="300" height="300" style="background: #000; border: 2px solid var(--border); border-radius: 8px;"></canvas>
+
+            <div id="snake-mobile-controls" style="margin-top: 20px; display: none;">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 180px; margin: 0 auto;">
+                    <div></div>
+                    <button class="btn btn-primary" style="padding: 15px;" onclick="app.snake.setDir(0, -1)"><i data-lucide="chevron-up"></i></button>
+                    <div></div>
+                    <button class="btn btn-primary" style="padding: 15px;" onclick="app.snake.setDir(-1, 0)"><i data-lucide="chevron-left"></i></button>
+                    <button class="btn btn-primary" style="padding: 15px;" onclick="app.snake.setDir(0, 1)"><i data-lucide="chevron-down"></i></button>
+                    <button class="btn btn-primary" style="padding: 15px;" onclick="app.snake.setDir(1, 0)"><i data-lucide="chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button id="snake-start-btn" class="btn btn-primary" onclick="app.snake.start()">Start Game</button>
+            </div>
+        </div>
+
         <div id="game-landing">
             <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 24px;">Pick a game and challenge your skills.</p>
 
@@ -727,6 +754,10 @@
                 <div class="premium-card action-card" onclick="app.sudoku.init(9)">
                     <i data-lucide="grid" style="color: #2864e8;"></i>
                     <span>Sudoku 9x9</span>
+                </div>
+                <div class="premium-card action-card" onclick="app.snake.init()">
+                    <i data-lucide="shuffle" style="color: #238636;"></i>
+                    <span>Snake Game</span>
                 </div>
                 <!-- Future games can be added here -->
             </div>
@@ -1299,6 +1330,140 @@
                             $("sudoku-container").style.display = 'none';
                         }
                     }
+                }
+            },
+
+            // --- Snake Game ---
+            snake: {
+                canvas: null,
+                ctx: null,
+                box: 20,
+                snakeArr: [],
+                food: null,
+                dir: "right",
+                score: 0,
+                gameLoop: null,
+                running: false,
+
+                init() {
+                    this.canvas = $("snake-canvas");
+                    this.ctx = this.canvas.getContext("2d");
+                    $("game-landing").style.display = 'none';
+                    $("snake-container").style.display = 'block';
+
+                    // Show mobile controls if on touch device
+                    if ('ontouchstart' in window) {
+                        $("snake-mobile-controls").style.display = 'block';
+                    }
+
+                    this.reset();
+                    this.draw();
+                    app.navigate('games');
+
+                    // Keyboard listener
+                    window.onkeydown = (e) => {
+                        if (this.running) {
+                            if (e.key === "ArrowUp" && this.dir !== "down") this.dir = "up";
+                            if (e.key === "ArrowDown" && this.dir !== "up") this.dir = "down";
+                            if (e.key === "ArrowLeft" && this.dir !== "right") this.dir = "left";
+                            if (e.key === "ArrowRight" && this.dir !== "left") this.dir = "right";
+                        }
+                    };
+                },
+
+                reset() {
+                    this.snakeArr = [{x: 5 * this.box, y: 5 * this.box}];
+                    this.spawnFood();
+                    this.score = 0;
+                    this.dir = "right";
+                    this.running = false;
+                    $("snake-score").textContent = "Score: 0";
+                    $("snake-start-btn").textContent = "Start Game";
+                },
+
+                spawnFood() {
+                    this.food = {
+                        x: Math.floor(Math.random() * (this.canvas.width / this.box)) * this.box,
+                        y: Math.floor(Math.random() * (this.canvas.height / this.box)) * this.box
+                    };
+                },
+
+                start() {
+                    if (this.running) return;
+                    this.running = true;
+                    $("snake-start-btn").textContent = "Reset";
+                    $("snake-start-btn").onclick = () => this.init();
+
+                    this.gameLoop = setInterval(() => {
+                        this.update();
+                        this.draw();
+                    }, 150);
+                },
+
+                setDir(dx, dy) {
+                    if (!this.running) return;
+                    if (dx === 1 && this.dir !== "left") this.dir = "right";
+                    if (dx === -1 && this.dir !== "right") this.dir = "left";
+                    if (dy === 1 && this.dir !== "up") this.dir = "down";
+                    if (dy === -1 && this.dir !== "down") this.dir = "up";
+                },
+
+                update() {
+                    let head = { ...this.snakeArr[0] };
+
+                    if (this.dir === "up") head.y -= this.box;
+                    if (this.dir === "down") head.y += this.box;
+                    if (this.dir === "left") head.x -= this.box;
+                    if (this.dir === "right") head.x += this.box;
+
+                    // Food check
+                    if (head.x === this.food.x && head.y === this.food.y) {
+                        this.score++;
+                        $("snake-score").textContent = "Score: " + this.score;
+                        this.spawnFood();
+                    } else {
+                        this.snakeArr.pop();
+                    }
+
+                    // Collision check
+                    if (head.x < 0 || head.x >= this.canvas.width || head.y < 0 || head.y >= this.canvas.height || this.collision(head)) {
+                        clearInterval(this.gameLoop);
+                        this.running = false;
+                        alert("Game Over! Score: " + this.score);
+                        this.init();
+                        return;
+                    }
+
+                    this.snakeArr.unshift(head);
+                },
+
+                collision(head) {
+                    return this.snakeArr.some(seg => seg.x === head.x && seg.y === head.y);
+                },
+
+                draw() {
+                    this.ctx.fillStyle = "black";
+                    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                    // Draw Snake
+                    this.snakeArr.forEach((seg, i) => {
+                        this.ctx.fillStyle = i === 0 ? "#4c84ff" : "#2864e8";
+                        this.ctx.fillRect(seg.x, seg.y, this.box - 2, this.box - 2);
+                    });
+
+                    // Draw Food
+                    this.ctx.fillStyle = "#238636";
+                    this.ctx.beginPath();
+                    this.ctx.arc(this.food.x + this.box / 2, this.food.y + this.box / 2, this.box / 2 - 2, 0, Math.PI * 2);
+                    this.ctx.fill();
+                },
+
+                back() {
+                    clearInterval(this.gameLoop);
+                    this.running = false;
+                    $("game-landing").style.display = 'block';
+                    $("snake-container").style.display = 'none';
+                    window.onkeydown = null;
                 }
             },
 
