@@ -13,6 +13,18 @@ echo ==========================================
 echo       PHONE-PC CONTROL SERVER
 echo ==========================================
 echo.
+
+:: --- PORT CLEANUP LOGIC ---
+echo Checking port 8000...
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :8000 ^| findstr LISTENING') do (
+    if not "%%a"=="" (
+        echo Port 8000 is busy (PID %%a). Cleaning up...
+        taskkill /f /pid %%a >nul 2>&1
+        echo Port 8000 is now free.
+    )
+)
+
+echo.
 echo Backend : %BACKEND%
 echo Python  : %PYTHON%
 echo.
@@ -21,30 +33,6 @@ echo Checking Python...
 if errorlevel 1 (
     echo.
     echo ERROR: Python executable not found.
-    pause
-    exit /b 1
-)
-
-echo.
-echo Checking WebSocket support...
-"%PYTHON%" -c "import websockets; print('WebSocket:', websockets.__version__)"
-if errorlevel 1 (
-    echo.
-    echo ERROR: websockets is not installed in this Python environment.
-    echo Run:
-    echo "%PYTHON%" -m pip install websockets
-    pause
-    exit /b 1
-)
-
-echo.
-echo Checking Uvicorn...
-"%PYTHON%" -m uvicorn --version
-if errorlevel 1 (
-    echo.
-    echo ERROR: Uvicorn is not installed in this Python environment.
-    echo Run:
-    echo "%PYTHON%" -m pip install uvicorn
     pause
     exit /b 1
 )

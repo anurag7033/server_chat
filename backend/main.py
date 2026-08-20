@@ -8,7 +8,21 @@ import socket
 import subprocess
 import threading
 import uuid
+import sys
+import logging
 from typing import Optional
+
+# Optimization for Windows Stability
+if sys.platform == 'win32':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+# Suppress annoying WinError 64 logs in console
+class NetworkErrorFilter(logging.Filter):
+    def filter(self, record):
+        return "WinError 64" not in record.getMessage()
+
+logging.getLogger("uvicorn.error").addFilter(NetworkErrorFilter())
+logging.getLogger("uvicorn.access").addFilter(NetworkErrorFilter())
 
 import pyperclip
 from fastapi import FastAPI, File, Header, HTTPException, UploadFile, WebSocket, WebSocketDisconnect
