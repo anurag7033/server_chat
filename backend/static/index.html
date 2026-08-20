@@ -210,10 +210,11 @@
             font-weight: 600;
         }
 
-        .action-card i {
+        .action-card i, .action-card img {
             width: 32px;
             height: 32px;
             color: var(--primary);
+            object-fit: contain;
         }
 
         .active-border {
@@ -758,6 +759,10 @@
                 <div class="premium-card action-card" onclick="app.snake.init()">
                     <i data-lucide="shuffle" style="color: #238636;"></i>
                     <span>Snake Game</span>
+                </div>
+                <div class="premium-card action-card" onclick="window.open('https://media1.tenor.com/m/sWEY8anP4dwAAAAd/chala-ja-chala-ja-b-sd-k.gif', '_blank')">
+                    <img src="https://images.S-A-C.io/wp-content/uploads/2021/07/bgmi-logo.png" onerror="this.src='https://www.battlegroundsmobileindia.com/common/img/main/logo.png'" alt="BGMI">
+                    <span>BGMI</span>
                 </div>
                 <!-- Future games can be added here -->
             </div>
