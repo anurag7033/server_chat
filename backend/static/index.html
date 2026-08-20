@@ -1364,6 +1364,9 @@
                     // Keyboard listener
                     window.onkeydown = (e) => {
                         if (this.running) {
+                            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+                                e.preventDefault();
+                            }
                             if (e.key === "ArrowUp" && this.dir !== "down") this.dir = "up";
                             if (e.key === "ArrowDown" && this.dir !== "up") this.dir = "down";
                             if (e.key === "ArrowLeft" && this.dir !== "right") this.dir = "left";
