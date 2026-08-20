@@ -1346,6 +1346,7 @@
                 running: false,
 
                 init() {
+                    this.stop();
                     this.canvas = $("snake-canvas");
                     this.ctx = this.canvas.getContext("2d");
                     $("game-landing").style.display = 'none';
@@ -1378,7 +1379,15 @@
                     this.dir = "right";
                     this.running = false;
                     $("snake-score").textContent = "Score: 0";
-                    $("snake-start-btn").textContent = "Start Game";
+                    const btn = $("snake-start-btn");
+                    btn.textContent = "Start Game";
+                    btn.onclick = () => this.start();
+                },
+
+                stop() {
+                    if (this.gameLoop) clearInterval(this.gameLoop);
+                    this.gameLoop = null;
+                    this.running = false;
                 },
 
                 spawnFood() {
@@ -1391,8 +1400,9 @@
                 start() {
                     if (this.running) return;
                     this.running = true;
-                    $("snake-start-btn").textContent = "Reset";
-                    $("snake-start-btn").onclick = () => this.init();
+                    const btn = $("snake-start-btn");
+                    btn.textContent = "Reset";
+                    btn.onclick = () => this.init();
 
                     this.gameLoop = setInterval(() => {
                         this.update();
@@ -1427,8 +1437,7 @@
 
                     // Collision check
                     if (head.x < 0 || head.x >= this.canvas.width || head.y < 0 || head.y >= this.canvas.height || this.collision(head)) {
-                        clearInterval(this.gameLoop);
-                        this.running = false;
+                        this.stop();
                         alert("Game Over! Score: " + this.score);
                         this.init();
                         return;
@@ -1459,8 +1468,7 @@
                 },
 
                 back() {
-                    clearInterval(this.gameLoop);
-                    this.running = false;
+                    this.stop();
                     $("game-landing").style.display = 'block';
                     $("snake-container").style.display = 'none';
                     window.onkeydown = null;
