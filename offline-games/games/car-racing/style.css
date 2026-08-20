@@ -1,0 +1,89 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #000;
+    font-family: Arial, sans-serif;
+    color: white;
+    touch-action: none;
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas {
+    background: #111;
+    border-left: 4px solid #333;
+    border-right: 4px solid #333;
+}
+
+#ui {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    pointer-events: none;
+}
+
+#score, #highscore {
+    font-size: 20px;
+    margin-bottom: 5px;
+    color: #00f2ff;
+    text-shadow: 0 0 5px rgba(0,242,255,0.5);
+}
+
+#menu {
+    position: absolute;
+    background: rgba(0,0,0,0.8);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    border: 2px solid #00f2ff;
+    z-index: 10;
+}
+
+#menu h1 { color: #00f2ff; margin-bottom: 20px; }
+
+button {
+    background: #00f2ff;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.home-btn {
+    display: inline-block;
+    background: #333;
+    color: white;
+    text-decoration: none;
+    padding: 15px 30px;
+    border-radius: 5px;
+}
+
+#controls {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 0 20px;
+    display: none; /* Shown on touch devices via JS */
+}
+
+.ctrl-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    opacity: 0.5;
+    background: #555;
+    color: white;
+    font-size: 30px;
+}

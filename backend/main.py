@@ -1043,5 +1043,9 @@ if STATIC_DIR.exists():
     try:
         from fastapi.staticfiles import StaticFiles
         app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+        GAMES_DIR = BASE_DIR.parent / "offline-games"
+        if GAMES_DIR.exists():
+            app.mount("/games", StaticFiles(directory=GAMES_DIR), name="games")
     except Exception:
         pass

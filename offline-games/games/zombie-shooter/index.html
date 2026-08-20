@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zombie Shooter - Game Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        <div id="ui">
+            <div id="stats">Kills: <span id="kills">0</span> | Wave: <span id="wave">1</span></div>
+            <a href="../../index.html" class="home-btn">HOME</a>
+        </div>
+        <div id="menu">
+            <h1>ZOMBIE APOCALYPSE</h1>
+            <p>WASD to Move | Mouse to Shoot</p>
+            <button id="start-btn">SURVIVE</button>
+        </div>
+        <!-- Virtual Joystick for Mobile -->
+        <div id="joystick-container">
+            <div id="joystick-base">
+                <div id="joystick-knob"></div>
+            </div>
+        </div>
+        <div id="fire-btn">🔥</div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

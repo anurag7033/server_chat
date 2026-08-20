@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Game Hub</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="glow-text">OFFLINE GAME HUB</h1>
+            <p>Retro Arcade Experience - No Internet Required</p>
+        </header>
+
+        <main class="game-grid">
+            <a href="games/car-racing/index.html" class="game-card">
+                <div class="card-icon">🏎️</div>
+                <h3>Car Racing</h3>
+                <p>Endless highway dodging</p>
+                <div class="high-score">Best: <span id="score-racing">0</span></div>
+            </a>
+
+            <a href="games/memory-card/index.html" class="game-card">
+                <div class="card-icon">🧠</div>
+                <h3>Memory Card</h3>
+                <p>Test your brain power</p>
+                <div class="high-score">Best: <span id="score-memory">0</span></div>
+            </a>
+
+            <a href="games/tic-tac-toe/index.html" class="game-card">
+                <div class="card-icon">⭕</div>
+                <h3>Tic Tac Toe</h3>
+                <p>Defeat the Unbeatable AI</p>
+                <div class="high-score">Wins: <span id="score-ttt">0</span></div>
+            </a>
+
+            <a href="games/zombie-shooter/index.html" class="game-card">
+                <div class="card-icon">🧟</div>
+                <h3>Zombie Shooter</h3>
+                <p>Survive the endless waves</p>
+                <div class="high-score">Kills: <span id="score-zombie">0</span></div>
+            </a>
+        </main>
+
+        <footer>
+            <p>Made with Vanilla JS & Canvas</p>
+        </footer>
+    </div>
+    <script src="js/main.js"></script>
+</body>
+</html>

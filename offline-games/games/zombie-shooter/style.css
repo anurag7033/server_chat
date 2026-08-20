@@ -1,0 +1,92 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background: #050505;
+    font-family: 'Arial Black', Gadget, sans-serif;
+    color: #f00;
+}
+
+#game-container { position: relative; width: 100vw; height: 100vh; }
+
+canvas { display: block; background: #111; cursor: crosshair; }
+
+#ui {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    pointer-events: none;
+}
+
+.home-btn {
+    pointer-events: auto;
+    background: #333;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+#menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background: rgba(0,0,0,0.8);
+    padding: 40px;
+    border: 2px solid #f00;
+}
+
+button {
+    background: #f00;
+    color: #fff;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+#joystick-container {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    display: none;
+}
+
+#joystick-base {
+    width: 100px;
+    height: 100px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    position: relative;
+}
+
+#joystick-knob {
+    width: 50px;
+    height: 50px;
+    background: rgba(255,0,0,0.5);
+    border-radius: 50%;
+    position: absolute;
+    top: 25px;
+    left: 25px;
+}
+
+#fire-btn {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    width: 80px;
+    height: 80px;
+    background: rgba(255,0,0,0.5);
+    border-radius: 50%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    color: white;
+    user-select: none;
+}

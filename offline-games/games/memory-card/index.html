@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Card - Game Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MEMORY BRAIN</h1>
+            <div class="stats">
+                <span>Time: <span id="timer">0</span>s</span>
+                <span>Moves: <span id="moves">0</span></span>
+                <span>Best: <span id="best">--</span></span>
+            </div>
+            <div class="difficulty">
+                <button onclick="initGame(4)">4x4</button>
+                <button onclick="initGame(5)">5x4</button>
+                <button onclick="initGame(6)">6x6</button>
+                <a href="../../index.html" class="home-btn">HOME</a>
+            </div>
+        </header>
+
+        <div id="game-grid" class="grid"></div>
+
+        <div id="win-message" class="hidden">
+            <h2>You Won!</h2>
+            <button onclick="location.reload()">Play Again</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
