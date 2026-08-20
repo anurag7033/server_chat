@@ -75,20 +75,6 @@ room_settings = {
     "room_locked": False,
 }
 
-# --- Private Rooms Storage ---
-# room_id -> { "name": str, "key": "1234", "owner_id": str, "members": set(ws), "chat_history": [], "clipboard_history": [], "created_at": iso_str, "locked": bool }
-private_rooms = {}
-room_key_map = {} # key -> room_id
-private_rooms_lock = asyncio.Lock()
-
-def generate_room_key():
-    import random
-    import string
-    while True:
-        key = "".join(random.choices(string.digits, k=4))
-        if key not in room_key_map:
-            return key
-
 class ClipboardData(BaseModel):
     text: str
 
